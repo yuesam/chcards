@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="80 English-to-Mandarin flashcards with tone-marked Pinyin and adaptive review scheduling.">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <title>Mandarin Flashcards</title>
+  <style>
+* { box-sizing: border-box; }
+html { min-height: 100%; background: #000; }
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+button { font: inherit; }
+[hidden] { display: none !important; }
+.page { flex: 1; background: #000; color: #f5f5f5; padding: 56px 24px 40px; }
+.container { max-width: 800px; margin: 0 auto; }
+.heading { margin-bottom: 40px; }
+.eyebrow { font-size: 10px; font-weight: 500; letter-spacing: .16em; color: #999; margin: 0 0 12px; }
+.heading h1 { font-size: clamp(32px, 5vw, 42px); line-height: 1.15; letter-spacing: -.04em; margin: 0; font-weight: 500; }
+.subtitle { color: #999; font-size: 14px; margin: 12px 0 0; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; border-top: 1px solid #252525; padding-top: 22px; }
+.stats div { display: flex; flex-direction: column; gap: 5px; }
+.stats strong { font-size: 23px; font-weight: 400; font-variant-numeric: tabular-nums; }
+.stats span { color: #999; font-size: 11px; }
+.progress { height: 2px; background: #252525; margin-top: 22px; overflow: hidden; }
+.progress span { display: block; height: 100%; background: #eee; transition: width .2s ease; }
+.cardMeta { margin: 28px 0 13px; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 10px; letter-spacing: .1em; color: #999; }
+.cardMeta > span > span { margin: 0 8px; }
+.badge { letter-spacing: 0; }
+.card { width: 100%; min-height: 340px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 28px 40px 22px; border: 1px solid #333; border-radius: 4px; background: #000; cursor: pointer; color: inherit; text-align: center; transition: border-color .2s ease; }
+.card:hover { border-color: #777; }
+.card:disabled { cursor: wait; }
+.cardLabel { font-size: 10px; letter-spacing: .15em; color: #999; }
+.english { font-size: clamp(24px, 3.6vw, 34px); max-width: 690px; line-height: 1.45; font-weight: 400; letter-spacing: -.02em; padding: 32px 0; text-wrap: pretty; }
+.cardHint { color: #999; font-size: 11px; line-height: 1.5; }
+.answer { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 25px 0; }
+.answerVariant { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
+.answerVariant + .answerVariant { border-top: 1px solid #333; margin-top: 8px; padding-top: 24px; }
+.pinyin { color: #ccc; font-size: clamp(18px, 2.3vw, 23px); line-height: 1.7; }
+.chinese { font-size: clamp(27px, 4vw, 37px); line-height: 1.65; letter-spacing: .05em; }
+.translation { padding-top: 12px; margin-top: 4px; font-size: 14px; line-height: 1.65; color: #999; max-width: 640px; }
+.revealed { border-color: #555; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+.actions button { min-height: 60px; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 4px; border: 1px solid #444; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity .2s, background .2s; }
+.actions button small { font-size: 11px; font-weight: 400; opacity: .75; }
+.again { background: #000; color: #eee; }
+.again:hover { background: #171717; }
+.correct { background: #eee; color: #000; border-color: #eee !important; }
+.correct:hover { background: #fff; }
+.actions button:disabled { opacity: .35; cursor: not-allowed; }
+.page button:focus-visible { outline: 2px solid #fff; outline-offset: 5px; }
+.feedback { min-height: 20px; text-align: center; font-size: 12px; color: #aaa; margin: 16px 0 0; }
+.warning { margin-top: 12px; padding: 12px; border: 1px solid #666; color: #ddd; font-size: 13px; }
+.footer { border-top: 1px solid #252525; margin-top: 26px; padding-top: 20px; }
+.footer p { font-size: 12px; line-height: 1.8; color: #999; margin: 0; }
+@media (max-width: 600px) {
+  .page { padding: 32px 18px; }
+  .heading { margin-bottom: 28px; }
+  .stats { gap: 10px; }
+  .stats strong { font-size: 21px; }
+  .stats span { font-size: 10px; line-height: 1.5; }
+  .card { min-height: 330px; padding: 24px 20px 20px; }
+  .actions button { flex-wrap: wrap; gap: 7px; padding: 12px; }
+  .actions button small { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card, .progress span, .actions button { transition: none; }
+}
+
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="container">
+      <header class="heading">
+        <p class="eyebrow">ENGLISH → CHINESE</p>
+        <h1>Flashcards</h1>
+        <p class="subtitle">Recall. Reveal. Repeat.</p>
+      </header>
+      <noscript><p class="warning">Enable JavaScript to reveal answers and save your study progress.</p></noscript>
+      <section class="stats" aria-label="Study progress">
+        <div><strong id="total">80</strong><span>cards in your deck</span></div>
+        <div><strong id="learning">0</strong><span>learning</span></div>
+        <div><strong id="confident">0</strong><span>confident</span></div>
+        <div><strong id="session">0</strong><span>reviews this session</span></div>
+      </section>
+      <div id="progress" class="progress" role="progressbar" aria-label="Confident cards" aria-valuenow="0" aria-valuemin="0" aria-valuemax="80"><span id="progress-fill"></span></div>
+      <div class="cardMeta">
+        <span>ENGLISH <span aria-hidden="true">→</span> MANDARIN</span>
+        <span id="badge" class="badge">New card</span>
+      </div>
+      <button id="card" type="button" class="card" aria-expanded="false" disabled>
+        <span id="card-label" class="cardLabel">HOW WOULD YOU SAY…</span>
+        <span id="card-content" class="english">Getting your deck ready…</span>
+        <span id="card-hint" class="cardHint">Click to reveal · or focus here and press Space</span>
+      </button>
+      <div class="actions">
+        <button id="again" type="button" class="again" disabled><span aria-hidden="true">↻</span> Again <small>I missed it</small></button>
+        <button id="correct" type="button" class="correct" disabled><span aria-hidden="true">✓</span> Got it <small>I remembered</small></button>
+      </div>
+      <p id="feedback" class="feedback" role="status">Reveal the answer before rating your recall.</p>
+      <p id="warning" class="warning" role="alert" hidden></p>
+      <footer class="footer"><p>Missed cards return sooner. Three correct answers in a row make a card “confident.” Progress saves in this browser.</p></footer>
+    </div>
+  </main>
+  <!-- Keep card IDs stable: saved progress is associated with these IDs. -->
+  <script id="deck-data" type="application/json">
+[
+  {
+    "id": "两个碗，谢谢。",
+    "english": "Two bowls, please.",
+    "chinese": "两个碗，谢谢。",
+    "pinyin": "Liǎng ge wǎn, xièxie."
+  },
+  {
+    "id": "再加一个盘子，谢谢。",
+    "english": "One more plate, please.",
+    "chinese": "再加一个盘子，谢谢。",
+    "pinyin": "Zài jiā yí ge pánzi, xièxie."
+  },
+  {
+    "id": "请拿一下筷子。",
+    "english": "Chopsticks, please.",
+    "chinese": "请拿一下筷子。",
+    "pinyin": "Qǐng ná yíxià kuàizi."
+  },
+  {
+    "id": "请拿一把叉子和一个勺子。",
+    "english": "A fork and a spoon, please.",
+    "chinese": "请拿一把叉子和一个勺子。",
+    "pinyin": "Qǐng ná yì bǎ chāzi hé yí ge sháozi."
+  },
+  {
+    "id": "在这吃还是打包带走？",
+    "english": "Is this eat-in or takeout?",
+    "chinese": "在这吃还是打包带走？",
+    "pinyin": "Zài zhè chī háishi dǎbāo dàizǒu?"
+  },
+  {
+    "id": "猪排饭还是鱼排饭。",
+    "english": "Pork chop rice or fish chop rice.",
+    "chinese": "猪排饭还是鱼排饭。",
+    "pinyin": "Zhūpái fàn háishi yúpái fàn."
+  },
+  {
+    "id": "请加辣椒油、孜然和香菜。",
+    "english": "Chili oil and some cumin and cilantro, please.",
+    "chinese": "请加辣椒油、孜然和香菜。",
+    "pinyin": "Qǐng jiā làjiāo yóu, zīrán hé xiāngcài."
+  },
+  {
+    "id": "酒店的入住和退房时间是几点？",
+    "english": "What time do I check in and check out of the hotel?",
+    "chinese": "酒店的入住和退房时间是几点？",
+    "pinyin": "Jiǔdiàn de rùzhù hé tuìfáng shíjiān shì jǐ diǎn?"
+  },
+  {
+    "id": "我想资助一个能真正应用于现实世界的实用项目",
+    "english": "I'm looking to fund a practical project that can actually be applied to the real world",
+    "chinese": "我想资助一个能真正应用于现实世界的实用项目",
+    "pinyin": "Wǒ xiǎng zīzhù yí ge néng zhēnzhèng yìngyòng yú xiànshí shìjiè de shíyòng xiàngmù."
+  },
+  {
+    "id": "我不想资助纯科研项目，只为了发表论文",
+    "english": "I'm not looking to fund pure research projects just to output scientific papers",
+    "chinese": "我不想资助纯科研项目，只为了发表论文",
+    "pinyin": "Wǒ bù xiǎng zīzhù chún kēyán xiàngmù, zhǐ wèile fābiǎo lùnwén."
+  },
+  {
+    "id": "我应该自己创业还是成立一个投资基金",
+    "english": "Should I create my own startup or start an investment fund",
+    "chinese": "我应该自己创业还是成立一个投资基金",
+    "pinyin": "Wǒ yīnggāi zìjǐ chuàngyè háishi chénglì yí ge tóuzī jījīn?"
+  },
+  {
+    "id": "人造肉目前的瓶颈和局限性是什么",
+    "english": "What are the current bottlenecks and limitations of lab-grown meat?",
+    "chinese": "人造肉目前的瓶颈和局限性是什么",
+    "pinyin": "Rénzào ròu mùqián de píngjǐng hé júxiànxìng shì shénme?"
+  },
+  {
+    "id": "降解塑料蛋白目前的瓶颈是什么",
+    "english": "What are the current bottlenecks of plastic-digesting proteins?",
+    "chinese": "降解塑料蛋白目前的瓶颈是什么",
+    "pinyin": "Jiàngjiě sùliào dànbái mùqián de píngjǐng shì shénme?"
+  },
+  {
+    "id": "为什么这个无法规模化",
+    "english": "Why can't we scale this?",
+    "chinese": "为什么这个无法规模化",
+    "pinyin": "Wèishénme zhè ge wúfǎ guīmóhuà?"
+  },
+  {
+    "id": "这个要规模化的最大限制是什么",
+    "english": "What's the biggest limitation for this to scale?",
+    "chinese": "这个要规模化的最大限制是什么",
+    "pinyin": "Zhè ge yào guīmóhuà de zuì dà xiànzhì shì shénme?"
+  },
+  {
+    "id": "供应链溯源应用",
+    "english": "Supply chain traceability app",
+    "chinese": "供应链溯源应用",
+    "pinyin": "Gōngyìngliàn sùyuán yìngyòng"
+  },
+  {
+    "id": "我开车送我妈妈去买菜",
+    "english": "I drove my mom to buy groceries",
+    "chinese": "我开车送我妈妈去买菜",
+    "pinyin": "Wǒ kāichē sòng wǒ māma qù mǎi cài."
+  },
+  {
+    "id": "保健品和维生素",
+    "english": "Supplements and vitamins",
+    "chinese": "保健品和维生素",
+    "pinyin": "Bǎojiànpǐn hé wéishēngsù"
+  },
+  {
+    "id": "计算机视觉",
+    "english": "Computer vision",
+    "chinese": "计算机视觉",
+    "pinyin": "Jìsuànjī shìjué"
+  },
+  {
+    "id": "数据中心",
+    "english": "Data center",
+    "chinese": "数据中心",
+    "pinyin": "Shùjù zhōngxīn"
+  },
+  {
+    "id": "你是做什么工作的？",
+    "english": "What do you do for work?",
+    "chinese": "你是做什么工作的？",
+    "pinyin": "Nǐ shì zuò shénme gōngzuò de?"
+  },
+  {
+    "id": "我为人工智能公司做营销，帮它们做国际推广",
+    "english": "I do marketing for AI companies. I help promote them internationally",
+    "chinese": "我为人工智能公司做营销，帮它们做国际推广",
+    "pinyin": "Wǒ wèi réngōng zhìnéng gōngsī zuò yíngxiāo, bāng tāmen zuò guójì tuīguǎng."
+  },
+  {
+    "id": "我和网红合作，向国际观众推广产品",
+    "english": "I collaborate with influencers to promote products to an international audience",
+    "chinese": "我和网红合作，向国际观众推广产品",
+    "pinyin": "Wǒ hé wǎnghóng hézuò, xiàng guójì guānzhòng tuīguǎng chǎnpǐn."
+  },
+  {
+    "id": "编程脚本",
+    "english": "Programming script",
+    "chinese": "编程脚本",
+    "pinyin": "Biānchéng jiǎoběn"
+  },
+  {
+    "id": "人脉",
+    "english": "Connections / network",
+    "chinese": "人脉",
+    "pinyin": "Rénmài"
+  },
+  {
+    "id": "创业点子",
+    "english": "Startup idea",
+    "chinese": "创业点子",
+    "pinyin": "Chuàngyè diǎnzi"
+  },
+  {
+    "id": "预计的发展轨迹是什么",
+    "english": "What's the estimated trajectory",
+    "chinese": "预计的发展轨迹是什么",
+    "pinyin": "Yùjì de fāzhǎn guǐjì shì shénme?"
+  },
+  {
+    "id": "它的表现会更好还是更差",
+    "english": "Will it perform better or worse",
+    "chinese": "它的表现会更好还是更差",
+    "pinyin": "Tā de biǎoxiàn huì gèng hǎo háishi gèng chà?"
+  },
+  {
+    "id": "截止日期",
+    "english": "Deadline",
+    "chinese": "截止日期",
+    "pinyin": "Jiézhǐ rìqī"
+  },
+  {
+    "id": "财报",
+    "english": "Earnings report",
+    "chinese": "财报",
+    "pinyin": "Cáibào"
+  },
+  {
+    "id": "这个商业点子可行吗？",
+    "english": "Is this business idea feasible?",
+    "chinese": "这个商业点子可行吗？",
+    "pinyin": "Zhè ge shāngyè diǎnzi kěxíng ma?"
+  },
+  {
+    "id": "我热衷于动物福利和动物权益",
+    "english": "I'm passionate about animal welfare and animal rights",
+    "chinese": "我热衷于动物福利和动物权益",
+    "pinyin": "Wǒ rèzhōng yú dòngwù fúlì hé dòngwù quányì."
+  },
+  {
+    "id": "反馈",
+    "english": "Feedback",
+    "chinese": "反馈",
+    "pinyin": "Fǎnkuì"
+  },
+  {
+    "id": "拼命工作，尽情玩乐",
+    "english": "Work hard, play hard",
+    "chinese": "拼命工作，尽情玩乐",
+    "pinyin": "Pīnmìng gōngzuò, jìnqíng wánlè"
+  },
+  {
+    "id": "吃惊",
+    "english": "Surprised / shocked",
+    "chinese": "吃惊",
+    "pinyin": "Chījīng"
+  },
+  {
+    "id": "颠覆性",
+    "english": "Disruptive",
+    "chinese": "颠覆性",
+    "pinyin": "Diānfùxìng"
+  },
+  {
+    "id": "飞轮",
+    "english": "Flywheel",
+    "chinese": "飞轮",
+    "pinyin": "Fēilún"
+  },
+  {
+    "id": "指数增长",
+    "english": "Exponential growth",
+    "chinese": "指数增长",
+    "pinyin": "Zhǐshù zēngzhǎng"
+  },
+  {
+    "id": "自我迭代",
+    "english": "Self-iteration",
+    "chinese": "自我迭代",
+    "pinyin": "Zìwǒ diédài"
+  },
+  {
+    "id": "全民基本收入",
+    "english": "Universal basic income",
+    "chinese": "全民基本收入",
+    "pinyin": "Quánmín jīběn shōurù"
+  },
+  {
+    "id": "姿态迁移",
+    "english": "Pose transfer",
+    "chinese": "姿态迁移",
+    "pinyin": "Zītài qiānyí"
+  },
+  {
+    "id": "分辨率",
+    "english": "Resolution",
+    "chinese": "分辨率",
+    "pinyin": "Fēnbiànlǜ"
+  },
+  {
+    "id": "显存",
+    "english": "VRAM",
+    "chinese": "显存",
+    "pinyin": "Xiǎncún"
+  },
+  {
+    "id": "推理速度",
+    "english": "Inference speed",
+    "chinese": "推理速度",
+    "pinyin": "Tuīlǐ sùdù"
+  },
+  {
+    "id": "你觉得这是个好主意吗",
+    "english": "Do you think this is a good idea",
+    "chinese": "你觉得这是个好主意吗",
+    "pinyin": "Nǐ juéde zhè shì ge hǎo zhǔyi ma?"
+  },
+  {
+    "id": "帮我集思广益",
+    "english": "Help me brainstorm ideas",
+    "chinese": "帮我集思广益",
+    "pinyin": "Bāng wǒ jísī guǎngyì"
+  },
+  {
+    "id": "成熟",
+    "english": "Mature",
+    "chinese": "成熟",
+    "pinyin": "Chéngshú"
+  },
+  {
+    "id": "音量",
+    "english": "Volume",
+    "chinese": "音量",
+    "pinyin": "Yīnliàng"
+  },
+  {
+    "id": "主角",
+    "english": "Protagonist",
+    "chinese": "主角",
+    "pinyin": "Zhǔjué"
+  },
+  {
+    "id": "报答",
+    "english": "Repay / reciprocate",
+    "chinese": "报答",
+    "pinyin": "Bàodá"
+  },
+  {
+    "id": "淘气",
+    "english": "Naughty",
+    "chinese": "淘气",
+    "pinyin": "Táoqì"
+  },
+  {
+    "id": "顽皮",
+    "english": "Mischievous / playful",
+    "chinese": "顽皮",
+    "pinyin": "Wánpí"
+  },
+  {
+    "id": "指甲",
+    "english": "Fingernail",
+    "chinese": "指甲",
+    "pinyin": "Zhǐjia"
+  },
+  {
+    "id": "独生子女",
+    "english": "Only child",
+    "chinese": "独生子女",
+    "pinyin": "Dúshēng zǐnǚ"
+  },
+  {
+    "id": "饺子",
+    "english": "Dumpling",
+    "chinese": "饺子",
+    "pinyin": "Jiǎozi"
+  },
+  {
+    "id": "强迫",
+    "english": "Force / compel",
+    "chinese": "强迫",
+    "pinyin": "Qiǎngpò"
+  },
+  {
+    "id": "和睦",
+    "english": "Harmonious",
+    "chinese": "和睦",
+    "pinyin": "Hémù"
+  },
+  {
+    "id": "温馨",
+    "english": "Warm / cozy",
+    "chinese": "温馨",
+    "pinyin": "Wēnxīn"
+  },
+  {
+    "id": "马虎",
+    "english": "Careless / sloppy",
+    "chinese": "马虎",
+    "pinyin": "Mǎhu"
+  },
+  {
+    "id": "直走",
+    "english": "Go straight",
+    "chinese": "直走",
+    "pinyin": "Zhí zǒu"
+  },
+  {
+    "id": "左转",
+    "english": "Turn left",
+    "chinese": "左转",
+    "pinyin": "Zuǒ zhuǎn"
+  },
+  {
+    "id": "螃蟹",
+    "english": "Crab",
+    "chinese": "螃蟹",
+    "pinyin": "Pángxiè"
+  },
+  {
+    "id": "嘴唇",
+    "english": "Lips",
+    "chinese": "嘴唇",
+    "pinyin": "Zuǐchún"
+  },
+  {
+    "id": "鼻子",
+    "english": "Nose",
+    "chinese": "鼻子",
+    "pinyin": "Bízi"
+  },
+  {
+    "id": "腋窝",
+    "english": "Armpits",
+    "chinese": "腋窝",
+    "pinyin": "Yèwō"
+  },
+  {
+    "id": "眉毛",
+    "english": "Eyebrow",
+    "chinese": "眉毛",
+    "pinyin": "Méimao"
+  },
+  {
+    "id": "睫毛",
+    "english": "Eyelash",
+    "chinese": "睫毛",
+    "pinyin": "Jiémáo"
+  },
+  {
+    "id": "舌头",
+    "english": "Tongue",
+    "chinese": "舌头",
+    "pinyin": "Shétou"
+  },
+  {
+    "id": "宽阔",
+    "english": "Wide / broad",
+    "chinese": "宽阔",
+    "pinyin": "Kuānkuò"
+  },
+  {
+    "id": "打造",
+    "english": "Build / forge",
+    "chinese": "打造",
+    "pinyin": "Dǎzào"
+  },
+  {
+    "id": "公寓",
+    "english": "Apartment",
+    "chinese": "公寓",
+    "pinyin": "Gōngyù"
+  },
+  {
+    "id": "拥挤",
+    "english": "Crowded",
+    "chinese": "拥挤",
+    "pinyin": "Yōngjǐ"
+  },
+  {
+    "id": "利息",
+    "english": "Interest (financial)",
+    "chinese": "利息",
+    "pinyin": "Lìxī"
+  },
+  {
+    "id": "随和",
+    "english": "Easygoing",
+    "chinese": "随和",
+    "pinyin": "Suíhe"
+  },
+  {
+    "id": "ai-personalized-education",
+    "english": "I'd like to investigate how to use AI to enrich educational programs or provide personalized education",
+    "chinese": "我想研究一下怎么用人工智能来丰富教学内容，或者提供个性化教育。",
+    "pinyin": "Wǒ xiǎng yánjiū yíxià zěnme yòng réngōng zhìnéng lái fēngfù jiàoxué nèiróng, huòzhě tígōng gèxìnghuà jiàoyù.",
+    "alternative": {
+      "chinese": "我想探索如何利用人工智能改进教学方案，或开展个性化教学。",
+      "pinyin": "Wǒ xiǎng tànsuǒ rúhé lìyòng réngōng zhìnéng gǎijìn jiàoxué fāng'àn, huò kāizhǎn gèxìnghuà jiàoxué."
+    }
+  },
+  {
+    "id": "free-refills",
+    "english": "Do you offer free refills?",
+    "chinese": "可以免费续杯吗？",
+    "pinyin": "Kěyǐ miǎnfèi xùbēi ma?",
+    "alternative": {
+      "chinese": "你们这里续杯免费吗？",
+      "pinyin": "Nǐmen zhèli xùbēi miǎnfèi ma?"
+    }
+  },
+  {
+    "id": "request-refill",
+    "english": "I’d like a refill please",
+    "chinese": "麻烦帮我续杯，谢谢。",
+    "pinyin": "Máfan bāng wǒ xùbēi, xièxie.",
+    "alternative": {
+      "chinese": "请帮我再加满，谢谢。",
+      "pinyin": "Qǐng bāng wǒ zài jiāmǎn, xièxie."
+    }
+  },
+  {
+    "id": "upcoming-plans",
+    "english": "Any exciting plans coming up?",
+    "chinese": "接下来有什么好玩的安排吗？",
+    "pinyin": "Jiēxiàlái yǒu shénme hǎowán de ānpái ma?",
+    "alternative": {
+      "chinese": "最近有什么值得期待的计划吗？",
+      "pinyin": "Zuìjìn yǒu shénme zhíde qīdài de jìhuà ma?"
+    }
+  },
+  {
+    "id": "interesting-recent-projects",
+    "english": "What are the most interesting projects you're working on lately?",
+    "chinese": "你最近在做的项目里，哪些最有意思？",
+    "pinyin": "Nǐ zuìjìn zài zuò de xiàngmù lǐ, nǎxiē zuì yǒu yìsi?",
+    "alternative": {
+      "chinese": "你最近在忙的项目中，哪些最有趣？",
+      "pinyin": "Nǐ zuìjìn zài máng de xiàngmù zhōng, nǎxiē zuì yǒuqù?"
+    }
+  },
+  {
+    "id": "month-end-invoice",
+    "english": "Here's the invoice for the end of the month.",
+    "chinese": "这是月底的发票。",
+    "pinyin": "Zhè shì yuèdǐ de fāpiào.",
+    "alternative": {
+      "chinese": "这是本月底结算的发票。",
+      "pinyin": "Zhè shì běn yuèdǐ jiésuàn de fāpiào."
+    }
+  }
+]
+  </script>
+  <script id="scheduler">
+"use strict";
+const intervals = [2, 5, 12, 30, 75, 150];
+function nextCard(ids, study, previous) {
+    const candidates = ids.filter(id => id !== previous);
+    const unseen = candidates.find(id => !study.progress[id]);
+    // Reserve every fifth review for new material so difficult cards cannot
+    // permanently crowd the rest of the deck out of the study queue.
+    if (unseen && study.turn % 5 === 0)
+        return unseen;
+    const due = candidates.filter(id => study.progress[id] && study.progress[id].due <= study.turn);
+    due.sort((a, b) => study.progress[a].due - study.progress[b].due);
+    return due[0] ?? unseen ??
+        candidates.sort((a, b) => study.progress[a].due - study.progress[b].due)[0] ?? ids[0];
+}
+function grade(study, ids, correct) {
+    const old = study.progress[study.current];
+    const streak = correct ? (old?.streak ?? 0) + 1 : 0;
+    const turn = study.turn + 1;
+    const progress = { ...study.progress, [study.current]: {
+            streak, reviews: (old?.reviews ?? 0) + 1,
+            due: turn + intervals[Math.min(streak, intervals.length - 1)],
+        } };
+    const updated = { turn, progress, current: study.current };
+    return { ...updated, current: nextCard(ids, updated, study.current) };
+}
+function restore(raw, ids) {
+    const fresh = { turn: 0, progress: {}, current: ids[0] };
+    if (!raw)
+        return fresh;
+    const value = JSON.parse(raw);
+    if (!value || !Number.isSafeInteger(value.turn) || value.turn < 0 ||
+        !value.progress || typeof value.progress !== "object")
+        throw new Error("Invalid progress");
+    const progress = {};
+    for (const id of ids) {
+        const p = value.progress[id];
+        if (p && [p.streak, p.reviews, p.due].every(n => Number.isSafeInteger(n) && n >= 0) && p.streak <= p.reviews) {
+            progress[id] = { streak: p.streak, reviews: p.reviews, due: p.due };
+        }
+    }
+    const study = { turn: value.turn, progress, current: value.current };
+    return { ...study, current: ids.includes(value.current) ? value.current : nextCard(ids, study) };
+}
+
+  </script>
+  <script id="app">
+"use strict";
+(() => {
+  const deck = JSON.parse(document.getElementById("deck-data").textContent);
+  const ids = deck.map(card => card.id);
+  // Use a project-specific key because GitHub Pages projects share an origin.
+  const KEY = "chcards-mandarin-flashcards-v1";
+  const get = id => document.getElementById(id);
+  const cardButton = get("card");
+  let study;
+  let revealed = false;
+  let session = 0;
+
+  function warn(message) {
+    get("warning").textContent = message;
+    get("warning").hidden = !message;
+  }
+
+  try {
+    study = restore(localStorage.getItem(KEY), ids);
+  } catch {
+    study = restore(null, ids);
+    warn("Saved progress could not be loaded. You can still study in this session.");
+  }
+
+  function span(className, text, lang) {
+    const element = document.createElement("span");
+    element.className = className;
+    element.textContent = text;
+    if (lang) element.lang = lang;
+    return element;
+  }
+
+  function render() {
+    const current = deck.find(card => card.id === study.current);
+    const learned = Object.values(study.progress).filter(p => p.streak >= 3).length;
+    const seen = Object.keys(study.progress).length;
+    const progress = study.progress[current.id];
+    get("total").textContent = deck.length;
+    get("learning").textContent = seen - learned;
+    get("confident").textContent = learned;
+    get("session").textContent = session;
+    get("progress").setAttribute("aria-valuenow", learned);
+    get("progress").setAttribute("aria-valuemax", deck.length);
+    get("progress-fill").style.width = (learned / deck.length * 100) + "%";
+    get("badge").textContent = !progress ? "New card" : progress.streak >= 3 ? "Keep it fresh" : "Building recall";
+    cardButton.disabled = false;
+    cardButton.classList.toggle("revealed", revealed);
+    cardButton.setAttribute("aria-expanded", String(revealed));
+    cardButton.setAttribute("aria-label", current.english + (revealed ? " Answer revealed" : " Reveal Chinese answer"));
+    get("card-label").textContent = revealed ? "THE ANSWER" : "HOW WOULD YOU SAY…";
+    get("card-hint").textContent = revealed ? "Say it out loud, then check your recall below" : "Click to reveal · or focus here and press Space";
+    get("again").disabled = !revealed;
+    get("correct").disabled = !revealed;
+    const content = get("card-content");
+    content.replaceChildren();
+    content.className = revealed ? "answer" : "english";
+    if (!revealed) {
+      content.textContent = current.english;
+      return;
+    }
+    const answers = current.alternative ? [current, current.alternative] : [current];
+    answers.forEach((answer, index) => {
+      const variant = span("answerVariant", "");
+      if (current.alternative) variant.append(span("cardLabel", index === 0 ? "1 · MOST COMMON" : "2 · ANOTHER COMMON WAY"));
+      variant.append(span("pinyin", answer.pinyin, "zh-Latn"), span("chinese", answer.chinese, "zh-Hans"));
+      content.append(variant);
+    });
+    content.append(span("translation", current.english));
+  }
+
+  function rate(correct) {
+    if (!revealed) return;
+    study = grade(study, ids, correct);
+    revealed = false;
+    session++;
+    try {
+      localStorage.setItem(KEY, JSON.stringify(study));
+      warn("");
+    } catch {
+      warn("Progress cannot be saved in this browser. Keep this page open to continue your session.");
+    }
+    render();
+    get("feedback").textContent = correct ? "Got it. This card will be spaced further out." : "Marked for practice. This card will return soon.";
+    cardButton.focus();
+  }
+
+  cardButton.addEventListener("click", () => { revealed = true; render(); });
+  get("again").addEventListener("click", () => rate(false));
+  get("correct").addEventListener("click", () => rate(true));
+  render();
+})();
+  </script>
+</body>
+</html>
