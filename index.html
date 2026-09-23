@@ -101,7 +101,7 @@ button { font: inherit; }
       </div>
       <p id="feedback" class="feedback" role="status">Reveal the answer before rating your recall.</p>
       <p id="warning" class="warning" role="alert" hidden></p>
-      <footer class="footer"><p>Missed cards return sooner. Three correct answers in a row make a card “confident.” Progress saves in this browser.</p></footer>
+      <footer class="footer"><p>“Got it” sets a card aside for this round. Missed cards return sooner. Once every card is marked “Got it,” a new shuffled round begins. Reloading reshuffles all cards and keeps your learning progress.</p></footer>
     </div>
   </main>
   <!-- Keep card IDs stable: saved progress is associated with these IDs. -->
@@ -615,49 +615,66 @@ button { font: inherit; }
   </script>
   <script id="scheduler">
 "use strict";
-const intervals = [2, 5, 12, 30, 75, 150];
-function nextCard(ids, study, previous) {
-    const candidates = ids.filter(id => id !== previous);
-    const unseen = candidates.find(id => !study.progress[id]);
-    // Reserve every fifth review for new material so difficult cards cannot
-    // permanently crowd the rest of the deck out of the study queue.
-    if (unseen && study.turn % 5 === 0)
-        return unseen;
-    const due = candidates.filter(id => study.progress[id] && study.progress[id].due <= study.turn);
-    due.sort((a, b) => study.progress[a].due - study.progress[b].due);
-    return due[0] ?? unseen ??
-        candidates.sort((a, b) => study.progress[a].due - study.progress[b].due)[0] ?? ids[0];
-}
-function grade(study, ids, correct) {
-    const old = study.progress[study.current];
-    const streak = correct ? (old?.streak ?? 0) + 1 : 0;
-    const turn = study.turn + 1;
-    const progress = { ...study.progress, [study.current]: {
-            streak, reviews: (old?.reviews ?? 0) + 1,
-            due: turn + intervals[Math.min(streak, intervals.length - 1)],
-        } };
-    const updated = { turn, progress, current: study.current };
-    return { ...updated, current: nextCard(ids, updated, study.current) };
-}
-function restore(raw, ids) {
-    const fresh = { turn: 0, progress: {}, current: ids[0] };
-    if (!raw)
-        return fresh;
-    const value = JSON.parse(raw);
-    if (!value || !Number.isSafeInteger(value.turn) || value.turn < 0 ||
-        !value.progress || typeof value.progress !== "object")
-        throw new Error("Invalid progress");
-    const progress = {};
-    for (const id of ids) {
-        const p = value.progress[id];
-        if (p && [p.streak, p.reviews, p.due].every(n => Number.isSafeInteger(n) && n >= 0) && p.streak <= p.reviews) {
-            progress[id] = { streak: p.streak, reviews: p.reviews, due: p.due };
-        }
-    }
-    const study = { turn: value.turn, progress, current: value.current };
-    return { ...study, current: ids.includes(value.current) ? value.current : nextCard(ids, study) };
+// Fisher–Yates: each page load and completed round gets a new random order.
+function shuffle(ids, random = Math.random) {
+  const queue = [...ids];
+  for (let i = queue.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [queue[i], queue[j]] = [queue[j], queue[i]];
+  }
+  return queue;
 }
 
+function startRound(ids, previous, random = Math.random) {
+  const queue = shuffle(ids, random);
+  // Avoid showing the last card again immediately at a round boundary.
+  if (queue.length > 1 && queue[0] === previous) {
+    const j = 1 + Math.floor(random() * (queue.length - 1));
+    [queue[0], queue[j]] = [queue[j], queue[0]];
+  }
+  return queue;
+}
+
+function grade(study, ids, correct, random = Math.random) {
+  const old = study.progress[study.current];
+  const streak = correct ? (old?.streak ?? 0) + 1 : 0;
+  const progress = { ...study.progress, [study.current]: {
+    streak, reviews: (old?.reviews ?? 0) + 1,
+  } };
+  let queue = study.queue.slice(1);
+  // Correct cards leave this round. Only missed cards rejoin the queue,
+  // after two other cards when possible, until they are recalled correctly.
+  if (!correct) queue.splice(Math.min(2, queue.length), 0, study.current);
+  let round = study.round;
+  if (queue.length === 0) {
+    queue = startRound(ids, study.current, random);
+    round++;
+  }
+  return { turn: study.turn + 1, progress, queue, current: queue[0], round };
+}
+
+function restore(raw, ids, random = Math.random) {
+  let turn = 0;
+  const progress = {};
+  if (raw) {
+    const value = JSON.parse(raw);
+    if (!value || !Number.isSafeInteger(value.turn) || value.turn < 0 ||
+        !value.progress || typeof value.progress !== "object") {
+      throw new Error("Invalid progress");
+    }
+    turn = value.turn;
+    for (const id of ids) {
+      const p = value.progress[id];
+      // Accept existing saves with the old due field, keeping their streaks.
+      if (p && [p.streak, p.reviews].every(n => Number.isSafeInteger(n) && n >= 0) && p.streak <= p.reviews) {
+        progress[id] = { streak: p.streak, reviews: p.reviews };
+      }
+    }
+  }
+  // Saved queue/current values are intentionally ignored: reload reshuffles all cards.
+  const queue = startRound(ids, undefined, random);
+  return { turn, progress, queue, current: queue[0], round: 1 };
+}
   </script>
   <script id="app">
 "use strict";
@@ -732,17 +749,20 @@ function restore(raw, ids) {
 
   function rate(correct) {
     if (!revealed) return;
+    const previousRound = study.round;
     study = grade(study, ids, correct);
     revealed = false;
     session++;
     try {
-      localStorage.setItem(KEY, JSON.stringify(study));
+      localStorage.setItem(KEY, JSON.stringify({ turn: study.turn, progress: study.progress }));
       warn("");
     } catch {
       warn("Progress cannot be saved in this browser. Keep this page open to continue your session.");
     }
     render();
-    get("feedback").textContent = correct ? "Got it. This card will be spaced further out." : "Marked for practice. This card will return soon.";
+    get("feedback").textContent = study.round > previousRound
+      ? "Round complete. Starting a new shuffled round."
+      : correct ? "Got it. This card is set aside until the next round." : "Marked for practice. This card will return soon.";
     cardButton.focus();
   }
 

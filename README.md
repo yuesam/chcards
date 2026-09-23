@@ -10,8 +10,11 @@ Open index.html in a browser, or serve this repository using any static web serv
 - Six cards include two Chinese versions, with the most common phrasing first.
 - Click the card (or focus it and press Space/Enter) to reveal the answer.
 - Choose **Again** or **Got it** to move on.
-- Missed cards return sooner; correct streaks increase the review interval. Every fifth review reserves a slot for an unseen card when available.
-- Three consecutive correct answers mark a card confident. Review intervals are measured in cards studied, not elapsed time.
+- Every page load starts a fresh shuffled round containing all 80 cards.
+- **Got it** removes a card for the rest of the round, so it cannot return before every other card has been shown.
+- **Again** puts a missed card back after two other cards when possible. If fewer remain, it returns sooner.
+- Once every card is marked **Got it**, a new shuffled round starts automatically. The last card is not immediately repeated at the round boundary.
+- Three consecutive correct answers mark a card confident. Streaks and review counts survive reloads; the current round does not.
 - Progress saves in localStorage in the current browser. Storage failures show a warning while allowing study to continue.
 
 Progress from another domain, including the original app, does not automatically transfer. Clearing browser site data clears saved progress. Direct file access may have browser-specific storage behavior; use the published site for regular study.
@@ -34,4 +37,4 @@ With Node.js installed, run:
 node --test tests/flashcards.test.mjs
 ```
 
-Tests exercise the actual embedded deck and scheduler, including missed-card repetition, increasing intervals, saved progress, invalid storage, and coverage of the entire deck.
+Tests exercise the actual embedded deck and scheduler, including shuffling, full-round coverage, correct-card exclusion, missed-card repetition, saved learning history, and invalid storage.

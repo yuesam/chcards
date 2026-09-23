@@ -27,34 +27,103 @@ test("all 80 cards have unique IDs, Chinese and tone-marked Pinyin", () => {
   assert.equal(deck.filter(card => card.alternative).length, 6);
 });
 
-test("a missed card returns after two intervening reviews", () => {
-  let study = restore(null, ids);
-  const missed = study.current;
-  study = grade(study, ids, false);
-  assert.notEqual(study.current, missed);
-  study = grade(study, ids, true);
-  assert.notEqual(study.current, missed);
-  study = grade(study, ids, true);
-  assert.equal(study.current, missed);
-});
 
-test("consistent correct answers widen spacing and a miss resets it", () => {
-  let study = restore(null, ids);
-  const id = study.current;
-  for (const interval of [5, 12, 30, 75, 150, 150]) {
-    study = grade({ ...study, current: id }, ids, true);
-    assert.equal(study.progress[id].due - study.turn, interval);
+const ordered = () => 0.999999;
+const json = value => JSON.parse(JSON.stringify(value));
+
+test("Got it never repeats a card until the entire deck is reviewed", () => {
+  let study = restore(null, ids, ordered);
+  for (let round = 1; round <= 3; round++) {
+    const seen = new Set();
+    let last;
+    for (let i = 0; i < ids.length; i++) {
+      assert.equal(study.round, round);
+      assert.ok(!seen.has(study.current));
+      seen.add(study.current);
+      last = study.current;
+      study = grade(study, ids, true, ordered);
+    }
+    assert.equal(seen.size, ids.length);
+    assert.equal(study.round, round + 1);
+    assert.notEqual(study.current, last);
   }
-  assert.equal(study.progress[id].streak, 6);
-  study = grade({ ...study, current: id }, ids, false);
-  assert.equal(study.progress[id].streak, 0);
-  assert.equal(study.progress[id].due - study.turn, 2);
 });
 
-test("progress and the next card survive a reload", () => {
-  let study = restore(null, ids);
-  for (let i = 0; i < 35; i++) study = grade(study, ids, i % 3 !== 0);
-  assert.deepEqual(restore(JSON.stringify(study), ids), study);
+test("missed cards return after two reviews without reintroducing correct cards", () => {
+  let study = restore(null, ids, ordered);
+  const missed = study.current;
+  study = grade(study, ids, false, ordered);
+  const retired = new Set();
+  for (let i = 0; i < 2; i++) {
+    assert.notEqual(study.current, missed);
+    retired.add(study.current);
+    study = grade(study, ids, true, ordered);
+  }
+  assert.equal(study.current, missed);
+  while (study.round === 1) {
+    assert.ok(!retired.has(study.current));
+    retired.add(study.current);
+    study = grade(study, ids, true, ordered);
+  }
+  assert.equal(retired.size, ids.length);
+});
+
+test("reloading reshuffles all cards while preserving saved learning history", () => {
+  let study = restore(null, ids, ordered);
+  study = grade(study, ids, true, ordered);
+  const first = restore(JSON.stringify(study), ids, () => 0);
+  const second = restore(JSON.stringify(study), ids, ordered);
+  assert.deepEqual(json(first.progress), json(study.progress));
+  assert.deepEqual(json(second.progress), json(study.progress));
+  assert.equal(first.turn, study.turn);
+  assert.notDeepEqual(json(first.queue), json(second.queue));
+  for (const restored of [first, second]) {
+    assert.equal(restored.round, 1);
+    assert.equal(restored.queue.length, ids.length);
+    assert.deepEqual([...restored.queue].sort(), [...ids].sort());
+    assert.equal(restored.current, restored.queue[0]);
+  }
+});
+
+test("the default shuffle uses randomness without losing or duplicating cards", () => {
+  const orders = new Set(Array.from({ length: 10 }, () => {
+    const study = restore(null, ids);
+    assert.deepEqual([...study.queue].sort(), [...ids].sort());
+    return JSON.stringify(study.queue);
+  }));
+  assert.ok(orders.size > 1);
+});
+
+test("legacy saves retain streaks and review counts, not their old order", () => {
+  const restored = restore(JSON.stringify({ turn: 20, current: ids[15], progress: {
+    [ids[0]]: { streak: 3, reviews: 6, due: 90 },
+  } }), ids, ordered);
+  assert.deepEqual(json(restored.progress[ids[0]]), { streak: 3, reviews: 6 });
+  assert.equal(restored.turn, 20);
+  assert.equal(restored.current, ids[0]);
+});
+
+test("streaks increase for correct answers and reset after a miss", () => {
+  const small = ["a"];
+  let study = restore(null, small);
+  for (let i = 1; i <= 3; i++) {
+    study = grade(study, small, true);
+    assert.equal(study.progress.a.streak, i);
+  }
+  study = grade(study, small, false);
+  assert.equal(study.progress.a.streak, 0);
+  assert.equal(study.progress.a.reviews, 4);
+  assert.equal(study.current, "a");
+});
+
+test("a final missed card remains available without bringing back retired cards", () => {
+  let study = restore(null, ["a", "b", "c"], ordered);
+  study = grade(study, ["a", "b", "c"], true, ordered);
+  study = grade(study, ["a", "b", "c"], true, ordered);
+  study = grade(study, ["a", "b", "c"], false, ordered);
+  assert.equal(study.current, "c");
+  assert.equal(study.round, 1);
+  assert.deepEqual(json(study.queue), ["c"]);
 });
 
 test("invalid storage is rejected and invalid individual entries are ignored", () => {
@@ -62,19 +131,7 @@ test("invalid storage is rejected and invalid individual entries are ignored", (
   assert.throws(() => restore('{"turn":-1}', ids));
   const restored = restore(JSON.stringify({ turn: 2, current: "removed", progress: {
     [ids[0]]: { streak: -2, reviews: 1, due: 0 },
-  } }), ids);
+  } }), ids, ordered);
   assert.equal(restored.current, ids[0]);
   assert.equal(Object.keys(restored.progress).length, 0);
-});
-
-test("ongoing practice reaches every card without consecutive repeats", () => {
-  let study = restore(null, ids);
-  const seen = new Set();
-  for (let i = 0; i < 600; i++) {
-    const previous = study.current;
-    seen.add(previous);
-    study = grade(study, ids, i % 5 !== 0);
-    assert.notEqual(study.current, previous);
-  }
-  assert.equal(seen.size, deck.length);
 });
