@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="80 English-to-Mandarin flashcards with tone-marked Pinyin and adaptive review scheduling.">
+  <meta name="description" content="84 English-to-Mandarin flashcards with tone-marked Pinyin and adaptive review scheduling.">
   <meta name="theme-color" content="#000000">
   <meta name="color-scheme" content="dark">
   <title>Mandarin Flashcards</title>
@@ -39,6 +39,7 @@ button { font: inherit; }
 .answerVariant + .answerVariant { border-top: 1px solid #333; margin-top: 8px; padding-top: 24px; }
 .pinyin { color: #ccc; font-size: clamp(18px, 2.3vw, 23px); line-height: 1.7; }
 .chinese { font-size: clamp(27px, 4vw, 37px); line-height: 1.65; letter-spacing: .05em; }
+.answerNote { color: #999; font-size: 12px; line-height: 1.6; }
 .translation { padding-top: 12px; margin-top: 4px; font-size: 14px; line-height: 1.65; color: #999; max-width: 640px; }
 .revealed { border-color: #555; }
 .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
@@ -80,12 +81,12 @@ button { font: inherit; }
       </header>
       <noscript><p class="warning">Enable JavaScript to reveal answers and save your study progress.</p></noscript>
       <section class="stats" aria-label="Study progress">
-        <div><strong id="total">80</strong><span>cards in your deck</span></div>
+        <div><strong id="total">84</strong><span>cards in your deck</span></div>
         <div><strong id="learning">0</strong><span>learning</span></div>
         <div><strong id="confident">0</strong><span>confident</span></div>
         <div><strong id="session">0</strong><span>reviews this session</span></div>
       </section>
-      <div id="progress" class="progress" role="progressbar" aria-label="Confident cards" aria-valuenow="0" aria-valuemin="0" aria-valuemax="80"><span id="progress-fill"></span></div>
+      <div id="progress" class="progress" role="progressbar" aria-label="Confident cards" aria-valuenow="0" aria-valuemin="0" aria-valuemax="84"><span id="progress-fill"></span></div>
       <div class="cardMeta">
         <span>ENGLISH <span aria-hidden="true">→</span> MANDARIN</span>
         <span id="badge" class="badge">New card</span>
@@ -111,445 +112,758 @@ button { font: inherit; }
     "id": "两个碗，谢谢。",
     "english": "Two bowls, please.",
     "chinese": "两个碗，谢谢。",
-    "pinyin": "Liǎng ge wǎn, xièxie."
+    "pinyin": "Liǎng ge wǎn, xièxie.",
+    "alternative": {
+      "chinese": "麻烦给我两个碗。",
+      "pinyin": "Máfan gěi wǒ liǎng ge wǎn."
+    }
   },
   {
     "id": "再加一个盘子，谢谢。",
     "english": "One more plate, please.",
     "chinese": "再加一个盘子，谢谢。",
-    "pinyin": "Zài jiā yí ge pánzi, xièxie."
+    "pinyin": "Zài jiā yí ge pánzi, xièxie.",
+    "alternative": {
+      "chinese": "麻烦再给我一个盘子。",
+      "pinyin": "Máfan zài gěi wǒ yí ge pánzi."
+    }
   },
   {
     "id": "请拿一下筷子。",
     "english": "Chopsticks, please.",
-    "chinese": "请拿一下筷子。",
-    "pinyin": "Qǐng ná yíxià kuàizi."
+    "chinese": "请给我一双筷子。",
+    "pinyin": "Qǐng gěi wǒ yì shuāng kuàizi.",
+    "alternative": {
+      "chinese": "麻烦给我一双筷子。",
+      "pinyin": "Máfan gěi wǒ yì shuāng kuàizi."
+    }
   },
   {
     "id": "请拿一把叉子和一个勺子。",
     "english": "A fork and a spoon, please.",
-    "chinese": "请拿一把叉子和一个勺子。",
-    "pinyin": "Qǐng ná yì bǎ chāzi hé yí ge sháozi."
+    "chinese": "请给我一把叉子和一个勺子。",
+    "pinyin": "Qǐng gěi wǒ yì bǎ chāzi hé yí ge sháozi.",
+    "alternative": {
+      "chinese": "麻烦给我一把叉子和一个勺子。",
+      "pinyin": "Máfan gěi wǒ yì bǎ chāzi hé yí ge sháozi."
+    }
   },
   {
     "id": "在这吃还是打包带走？",
     "english": "Is this eat-in or takeout?",
-    "chinese": "在这吃还是打包带走？",
-    "pinyin": "Zài zhè chī háishi dǎbāo dàizǒu?"
+    "chinese": "在这儿吃还是打包？",
+    "pinyin": "Zài zhèr chī háishi dǎbāo?",
+    "alternative": {
+      "chinese": "堂食还是外带？",
+      "pinyin": "Tángshí háishi wàidài?"
+    }
   },
   {
     "id": "猪排饭还是鱼排饭。",
     "english": "Pork chop rice or fish chop rice.",
     "chinese": "猪排饭还是鱼排饭。",
-    "pinyin": "Zhūpái fàn háishi yúpái fàn."
+    "pinyin": "Zhūpái fàn háishi yúpái fàn.",
+    "alternative": {
+      "chinese": "要猪排饭还是鱼排饭？",
+      "pinyin": "Yào zhūpái fàn háishi yúpái fàn?"
+    }
   },
   {
     "id": "请加辣椒油、孜然和香菜。",
     "english": "Chili oil and some cumin and cilantro, please.",
     "chinese": "请加辣椒油、孜然和香菜。",
-    "pinyin": "Qǐng jiā làjiāo yóu, zīrán hé xiāngcài."
+    "pinyin": "Qǐng jiā làjiāo yóu, zīrán hé xiāngcài.",
+    "alternative": {
+      "chinese": "麻烦放点辣椒油、孜然和香菜。",
+      "pinyin": "Máfan fàng diǎn làjiāo yóu, zīrán hé xiāngcài."
+    }
   },
   {
     "id": "酒店的入住和退房时间是几点？",
     "english": "What time do I check in and check out of the hotel?",
     "chinese": "酒店的入住和退房时间是几点？",
-    "pinyin": "Jiǔdiàn de rùzhù hé tuìfáng shíjiān shì jǐ diǎn?"
+    "pinyin": "Jiǔdiàn de rùzhù hé tuìfáng shíjiān shì jǐ diǎn?",
+    "alternative": {
+      "chinese": "酒店几点能办入住，几点之前要退房？",
+      "pinyin": "Jiǔdiàn jǐ diǎn néng bàn rùzhù, jǐ diǎn zhīqián yào tuìfáng?"
+    }
   },
   {
     "id": "我想资助一个能真正应用于现实世界的实用项目",
     "english": "I'm looking to fund a practical project that can actually be applied to the real world",
-    "chinese": "我想资助一个能真正应用于现实世界的实用项目",
-    "pinyin": "Wǒ xiǎng zīzhù yí ge néng zhēnzhèng yìngyòng yú xiànshí shìjiè de shíyòng xiàngmù."
+    "chinese": "我想资助一个能在实际生活中用得上的实用项目。",
+    "pinyin": "Wǒ xiǎng zīzhù yí ge néng zài shíjì shēnghuó zhōng yòng de shàng de shíyòng xiàngmù.",
+    "alternative": {
+      "chinese": "我想支持一个真正能落地的实用项目。",
+      "pinyin": "Wǒ xiǎng zhīchí yí ge zhēnzhèng néng luòdì de shíyòng xiàngmù."
+    }
   },
   {
     "id": "我不想资助纯科研项目，只为了发表论文",
     "english": "I'm not looking to fund pure research projects just to output scientific papers",
-    "chinese": "我不想资助纯科研项目，只为了发表论文",
-    "pinyin": "Wǒ bù xiǎng zīzhù chún kēyán xiàngmù, zhǐ wèile fābiǎo lùnwén."
+    "chinese": "我不想资助只是为了发表论文的纯科研项目。",
+    "pinyin": "Wǒ bù xiǎng zīzhù zhǐshì wèile fābiǎo lùnwén de chún kēyán xiàngmù.",
+    "alternative": {
+      "chinese": "我不想支持那种只为发论文而做的纯研究项目。",
+      "pinyin": "Wǒ bù xiǎng zhīchí nà zhǒng zhǐ wèi fā lùnwén ér zuò de chún yánjiū xiàngmù."
+    }
   },
   {
     "id": "我应该自己创业还是成立一个投资基金",
     "english": "Should I create my own startup or start an investment fund",
     "chinese": "我应该自己创业还是成立一个投资基金",
-    "pinyin": "Wǒ yīnggāi zìjǐ chuàngyè háishi chénglì yí ge tóuzī jījīn?"
+    "pinyin": "Wǒ yīnggāi zìjǐ chuàngyè háishi chénglì yí ge tóuzī jījīn?",
+    "alternative": {
+      "chinese": "我该自己开公司，还是设立一只投资基金？",
+      "pinyin": "Wǒ gāi zìjǐ kāi gōngsī, háishi shèlì yì zhī tóuzī jījīn?"
+    }
   },
   {
     "id": "人造肉目前的瓶颈和局限性是什么",
     "english": "What are the current bottlenecks and limitations of lab-grown meat?",
-    "chinese": "人造肉目前的瓶颈和局限性是什么",
-    "pinyin": "Rénzào ròu mùqián de píngjǐng hé júxiànxìng shì shénme?"
+    "chinese": "培养肉目前有哪些瓶颈和局限？",
+    "pinyin": "Péiyǎng ròu mùqián yǒu nǎxiē píngjǐng hé júxiàn?",
+    "alternative": {
+      "chinese": "细胞培养肉现在主要卡在哪些地方，有什么限制？",
+      "pinyin": "Xìbāo péiyǎng ròu xiànzài zhǔyào kǎ zài nǎxiē dìfang, yǒu shénme xiànzhì?"
+    }
   },
   {
     "id": "降解塑料蛋白目前的瓶颈是什么",
     "english": "What are the current bottlenecks of plastic-digesting proteins?",
-    "chinese": "降解塑料蛋白目前的瓶颈是什么",
-    "pinyin": "Jiàngjiě sùliào dànbái mùqián de píngjǐng shì shénme?"
+    "chinese": "能降解塑料的蛋白质目前有哪些瓶颈？",
+    "pinyin": "Néng jiàngjiě sùliào de dànbáizhì mùqián yǒu nǎxiē píngjǐng?",
+    "alternative": {
+      "chinese": "能分解塑料的蛋白质现在主要卡在哪些地方？",
+      "pinyin": "Néng fēnjiě sùliào de dànbáizhì xiànzài zhǔyào kǎ zài nǎxiē dìfang?"
+    }
   },
   {
     "id": "为什么这个无法规模化",
     "english": "Why can't we scale this?",
     "chinese": "为什么这个无法规模化",
-    "pinyin": "Wèishénme zhè ge wúfǎ guīmóhuà?"
+    "pinyin": "Wèishénme zhè ge wúfǎ guīmóhuà?",
+    "alternative": {
+      "chinese": "这个为什么没法扩大规模？",
+      "pinyin": "Zhè ge wèishénme méi fǎ kuòdà guīmó?"
+    }
   },
   {
     "id": "这个要规模化的最大限制是什么",
     "english": "What's the biggest limitation for this to scale?",
-    "chinese": "这个要规模化的最大限制是什么",
-    "pinyin": "Zhè ge yào guīmóhuà de zuì dà xiànzhì shì shénme?"
+    "chinese": "这个项目要扩大规模，最大的限制是什么？",
+    "pinyin": "Zhè ge xiàngmù yào kuòdà guīmó, zuì dà de xiànzhì shì shénme?",
+    "alternative": {
+      "chinese": "扩大这个项目的规模，最大的障碍是什么？",
+      "pinyin": "Kuòdà zhè ge xiàngmù de guīmó, zuì dà de zhàng'ài shì shénme?"
+    }
   },
   {
     "id": "供应链溯源应用",
     "english": "Supply chain traceability app",
     "chinese": "供应链溯源应用",
-    "pinyin": "Gōngyìngliàn sùyuán yìngyòng"
+    "pinyin": "Gōngyìngliàn sùyuán yìngyòng",
+    "alternative": {
+      "chinese": "追踪供应链来源的应用程序",
+      "pinyin": "Zhuīzōng gōngyìngliàn láiyuán de yìngyòng chéngxù"
+    }
   },
   {
     "id": "我开车送我妈妈去买菜",
     "english": "I drove my mom to buy groceries",
-    "chinese": "我开车送我妈妈去买菜",
-    "pinyin": "Wǒ kāichē sòng wǒ māma qù mǎi cài."
+    "chinese": "我开车送我妈去买菜了。",
+    "pinyin": "Wǒ kāichē sòng wǒ mā qù mǎi cài le.",
+    "alternative": {
+      "chinese": "我开车带我妈去买菜了。",
+      "pinyin": "Wǒ kāichē dài wǒ mā qù mǎi cài le."
+    }
   },
   {
     "id": "保健品和维生素",
     "english": "Supplements and vitamins",
     "chinese": "保健品和维生素",
-    "pinyin": "Bǎojiànpǐn hé wéishēngsù"
+    "pinyin": "Bǎojiànpǐn hé wéishēngsù",
+    "alternative": {
+      "chinese": "营养补充剂和维生素",
+      "pinyin": "Yíngyǎng bǔchōngjì hé wéishēngsù"
+    }
   },
   {
     "id": "计算机视觉",
     "english": "Computer vision",
     "chinese": "计算机视觉",
-    "pinyin": "Jìsuànjī shìjué"
+    "pinyin": "Jìsuànjī shìjué",
+    "alternative": {
+      "chinese": "电脑视觉",
+      "pinyin": "Diànnǎo shìjué",
+      "note": "Also used regionally; 计算机视觉 is the standard technical term."
+    }
   },
   {
     "id": "数据中心",
     "english": "Data center",
     "chinese": "数据中心",
-    "pinyin": "Shùjù zhōngxīn"
+    "pinyin": "Shùjù zhōngxīn",
+    "alternative": {
+      "chinese": "数据处理中心",
+      "pinyin": "Shùjù chǔlǐ zhōngxīn",
+      "note": "A fuller term: data-processing center."
+    }
   },
   {
     "id": "你是做什么工作的？",
     "english": "What do you do for work?",
     "chinese": "你是做什么工作的？",
-    "pinyin": "Nǐ shì zuò shénme gōngzuò de?"
+    "pinyin": "Nǐ shì zuò shénme gōngzuò de?",
+    "alternative": {
+      "chinese": "你从事什么工作？",
+      "pinyin": "Nǐ cóngshì shénme gōngzuò?"
+    }
   },
   {
     "id": "我为人工智能公司做营销，帮它们做国际推广",
     "english": "I do marketing for AI companies. I help promote them internationally",
     "chinese": "我为人工智能公司做营销，帮它们做国际推广",
-    "pinyin": "Wǒ wèi réngōng zhìnéng gōngsī zuò yíngxiāo, bāng tāmen zuò guójì tuīguǎng."
+    "pinyin": "Wǒ wèi réngōng zhìnéng gōngsī zuò yíngxiāo, bāng tāmen zuò guójì tuīguǎng.",
+    "alternative": {
+      "chinese": "我帮人工智能公司做海外营销和推广。",
+      "pinyin": "Wǒ bāng réngōng zhìnéng gōngsī zuò hǎiwài yíngxiāo hé tuīguǎng."
+    }
   },
   {
     "id": "我和网红合作，向国际观众推广产品",
     "english": "I collaborate with influencers to promote products to an international audience",
     "chinese": "我和网红合作，向国际观众推广产品",
-    "pinyin": "Wǒ hé wǎnghóng hézuò, xiàng guójì guānzhòng tuīguǎng chǎnpǐn."
+    "pinyin": "Wǒ hé wǎnghóng hézuò, xiàng guójì guānzhòng tuīguǎng chǎnpǐn.",
+    "alternative": {
+      "chinese": "我通过和网红合作，把产品推广给海外用户。",
+      "pinyin": "Wǒ tōngguò hé wǎnghóng hézuò, bǎ chǎnpǐn tuīguǎng gěi hǎiwài yònghù."
+    }
   },
   {
     "id": "编程脚本",
     "english": "Programming script",
     "chinese": "编程脚本",
-    "pinyin": "Biānchéng jiǎoběn"
+    "pinyin": "Biānchéng jiǎoběn",
+    "alternative": {
+      "chinese": "脚本程序",
+      "pinyin": "Jiǎoběn chéngxù"
+    }
   },
   {
     "id": "人脉",
     "english": "Connections / network",
     "chinese": "人脉",
-    "pinyin": "Rénmài"
+    "pinyin": "Rénmài",
+    "alternative": {
+      "chinese": "人际关系网",
+      "pinyin": "Rénjì guānxì wǎng"
+    }
   },
   {
     "id": "创业点子",
     "english": "Startup idea",
     "chinese": "创业点子",
-    "pinyin": "Chuàngyè diǎnzi"
+    "pinyin": "Chuàngyè diǎnzi",
+    "alternative": {
+      "chinese": "创业想法",
+      "pinyin": "Chuàngyè xiǎngfǎ"
+    }
   },
   {
     "id": "预计的发展轨迹是什么",
     "english": "What's the estimated trajectory",
-    "chinese": "预计的发展轨迹是什么",
-    "pinyin": "Yùjì de fāzhǎn guǐjì shì shénme?"
+    "chinese": "预计会朝什么方向发展？",
+    "pinyin": "Yùjì huì cháo shénme fāngxiàng fāzhǎn?",
+    "alternative": {
+      "chinese": "预期会怎么发展？",
+      "pinyin": "Yùqī huì zěnme fāzhǎn?"
+    }
   },
   {
     "id": "它的表现会更好还是更差",
     "english": "Will it perform better or worse",
     "chinese": "它的表现会更好还是更差",
-    "pinyin": "Tā de biǎoxiàn huì gèng hǎo háishi gèng chà?"
+    "pinyin": "Tā de biǎoxiàn huì gèng hǎo háishi gèng chà?",
+    "alternative": {
+      "chinese": "它会表现得更好，还是更差？",
+      "pinyin": "Tā huì biǎoxiàn de gèng hǎo, háishi gèng chà?"
+    }
   },
   {
     "id": "截止日期",
     "english": "Deadline",
     "chinese": "截止日期",
-    "pinyin": "Jiézhǐ rìqī"
+    "pinyin": "Jiézhǐ rìqī",
+    "alternative": {
+      "chinese": "最后期限",
+      "pinyin": "Zuìhòu qīxiàn"
+    }
   },
   {
     "id": "财报",
     "english": "Earnings report",
     "chinese": "财报",
-    "pinyin": "Cáibào"
+    "pinyin": "Cáibào",
+    "alternative": {
+      "chinese": "业绩报告",
+      "pinyin": "Yèjì bàogào"
+    }
   },
   {
     "id": "这个商业点子可行吗？",
     "english": "Is this business idea feasible?",
     "chinese": "这个商业点子可行吗？",
-    "pinyin": "Zhè ge shāngyè diǎnzi kěxíng ma?"
+    "pinyin": "Zhè ge shāngyè diǎnzi kěxíng ma?",
+    "alternative": {
+      "chinese": "这个生意想法行得通吗？",
+      "pinyin": "Zhè ge shēngyi xiǎngfǎ xíng de tōng ma?"
+    }
   },
   {
     "id": "我热衷于动物福利和动物权益",
     "english": "I'm passionate about animal welfare and animal rights",
-    "chinese": "我热衷于动物福利和动物权益",
-    "pinyin": "Wǒ rèzhōng yú dòngwù fúlì hé dòngwù quányì."
+    "chinese": "我热衷于推动动物福利和保护动物权益。",
+    "pinyin": "Wǒ rèzhōng yú tuīdòng dòngwù fúlì hé bǎohù dòngwù quányì.",
+    "alternative": {
+      "chinese": "我对推动动物福利和维护动物权益很有热情。",
+      "pinyin": "Wǒ duì tuīdòng dòngwù fúlì hé wéihù dòngwù quányì hěn yǒu rèqíng."
+    }
   },
   {
     "id": "反馈",
     "english": "Feedback",
     "chinese": "反馈",
-    "pinyin": "Fǎnkuì"
+    "pinyin": "Fǎnkuì",
+    "alternative": {
+      "chinese": "反馈意见",
+      "pinyin": "Fǎnkuì yìjiàn"
+    }
   },
   {
     "id": "拼命工作，尽情玩乐",
     "english": "Work hard, play hard",
-    "chinese": "拼命工作，尽情玩乐",
-    "pinyin": "Pīnmìng gōngzuò, jìnqíng wánlè"
+    "chinese": "努力工作，尽情玩乐。",
+    "pinyin": "Nǔlì gōngzuò, jìnqíng wánlè.",
+    "alternative": {
+      "chinese": "工作时全力以赴，玩的时候尽情享受。",
+      "pinyin": "Gōngzuò shí quánlì yǐfù, wán de shíhou jìnqíng xiǎngshòu."
+    }
   },
   {
     "id": "吃惊",
     "english": "Surprised / shocked",
     "chinese": "吃惊",
-    "pinyin": "Chījīng"
+    "pinyin": "Chījīng",
+    "alternative": {
+      "chinese": "惊讶",
+      "pinyin": "Jīngyà"
+    }
   },
   {
     "id": "颠覆性",
     "english": "Disruptive",
     "chinese": "颠覆性",
-    "pinyin": "Diānfùxìng"
+    "pinyin": "Diānfùxìng",
+    "alternative": {
+      "chinese": "具有颠覆性的",
+      "pinyin": "Jùyǒu diānfùxìng de"
+    }
   },
   {
     "id": "飞轮",
     "english": "Flywheel",
     "chinese": "飞轮",
-    "pinyin": "Fēilún"
+    "pinyin": "Fēilún",
+    "alternative": {
+      "chinese": "飞轮装置",
+      "pinyin": "Fēilún zhuāngzhì",
+      "note": "For the physical device."
+    }
   },
   {
     "id": "指数增长",
     "english": "Exponential growth",
     "chinese": "指数增长",
-    "pinyin": "Zhǐshù zēngzhǎng"
+    "pinyin": "Zhǐshù zēngzhǎng",
+    "alternative": {
+      "chinese": "指数式增长",
+      "pinyin": "Zhǐshùshì zēngzhǎng"
+    }
   },
   {
     "id": "自我迭代",
     "english": "Self-iteration",
     "chinese": "自我迭代",
-    "pinyin": "Zìwǒ diédài"
+    "pinyin": "Zìwǒ diédài",
+    "alternative": {
+      "chinese": "自我更新迭代",
+      "pinyin": "Zìwǒ gēngxīn diédài"
+    }
   },
   {
     "id": "全民基本收入",
     "english": "Universal basic income",
     "chinese": "全民基本收入",
-    "pinyin": "Quánmín jīběn shōurù"
+    "pinyin": "Quánmín jīběn shōurù",
+    "alternative": {
+      "chinese": "无条件基本收入",
+      "pinyin": "Wú tiáojiàn jīběn shōurù",
+      "note": "Emphasizes that the income is unconditional."
+    }
   },
   {
     "id": "姿态迁移",
     "english": "Pose transfer",
     "chinese": "姿态迁移",
-    "pinyin": "Zītài qiānyí"
+    "pinyin": "Zītài qiānyí",
+    "alternative": {
+      "chinese": "姿势迁移",
+      "pinyin": "Zīshì qiānyí"
+    }
   },
   {
     "id": "分辨率",
     "english": "Resolution",
     "chinese": "分辨率",
-    "pinyin": "Fēnbiànlǜ"
+    "pinyin": "Fēnbiànlǜ",
+    "alternative": {
+      "chinese": "解析度",
+      "pinyin": "Jiěxīdù",
+      "note": "Common in Taiwan."
+    }
   },
   {
     "id": "显存",
     "english": "VRAM",
     "chinese": "显存",
-    "pinyin": "Xiǎncún"
+    "pinyin": "Xiǎncún",
+    "alternative": {
+      "chinese": "显卡内存",
+      "pinyin": "Xiǎnkǎ nèicún"
+    }
   },
   {
     "id": "推理速度",
     "english": "Inference speed",
     "chinese": "推理速度",
-    "pinyin": "Tuīlǐ sùdù"
+    "pinyin": "Tuīlǐ sùdù",
+    "alternative": {
+      "chinese": "模型推理的速度",
+      "pinyin": "Móxíng tuīlǐ de sùdù"
+    }
   },
   {
     "id": "你觉得这是个好主意吗",
     "english": "Do you think this is a good idea",
     "chinese": "你觉得这是个好主意吗",
-    "pinyin": "Nǐ juéde zhè shì ge hǎo zhǔyi ma?"
+    "pinyin": "Nǐ juéde zhè shì ge hǎo zhǔyi ma?",
+    "alternative": {
+      "chinese": "你觉得这个想法怎么样？",
+      "pinyin": "Nǐ juéde zhè ge xiǎngfǎ zěnmeyàng?"
+    }
   },
   {
     "id": "帮我集思广益",
     "english": "Help me brainstorm ideas",
-    "chinese": "帮我集思广益",
-    "pinyin": "Bāng wǒ jísī guǎngyì"
+    "chinese": "帮我一起想想点子。",
+    "pinyin": "Bāng wǒ yìqǐ xiǎngxiang diǎnzi.",
+    "alternative": {
+      "chinese": "帮我一起头脑风暴一下。",
+      "pinyin": "Bāng wǒ yìqǐ tóunǎo fēngbào yíxià."
+    }
   },
   {
     "id": "成熟",
     "english": "Mature",
     "chinese": "成熟",
-    "pinyin": "Chéngshú"
+    "pinyin": "Chéngshú",
+    "alternative": {
+      "chinese": "成熟稳重",
+      "pinyin": "Chéngshú wěnzhòng",
+      "note": "For a person: mature and steady."
+    }
   },
   {
     "id": "音量",
     "english": "Volume",
     "chinese": "音量",
-    "pinyin": "Yīnliàng"
+    "pinyin": "Yīnliàng",
+    "alternative": {
+      "chinese": "声音大小",
+      "pinyin": "Shēngyīn dàxiǎo"
+    }
   },
   {
     "id": "主角",
     "english": "Protagonist",
     "chinese": "主角",
-    "pinyin": "Zhǔjué"
+    "pinyin": "Zhǔjué",
+    "alternative": {
+      "chinese": "主人公",
+      "pinyin": "Zhǔréngōng"
+    }
   },
   {
     "id": "报答",
     "english": "Repay / reciprocate",
     "chinese": "报答",
-    "pinyin": "Bàodá"
+    "pinyin": "Bàodá",
+    "alternative": {
+      "chinese": "回报",
+      "pinyin": "Huíbào"
+    }
   },
   {
     "id": "淘气",
     "english": "Naughty",
     "chinese": "淘气",
-    "pinyin": "Táoqì"
+    "pinyin": "Táoqì",
+    "alternative": {
+      "chinese": "调皮",
+      "pinyin": "Tiáopí"
+    }
   },
   {
     "id": "顽皮",
     "english": "Mischievous / playful",
     "chinese": "顽皮",
-    "pinyin": "Wánpí"
+    "pinyin": "Wánpí",
+    "alternative": {
+      "chinese": "调皮好动",
+      "pinyin": "Tiáopí hàodòng",
+      "note": "For someone playful and active."
+    }
   },
   {
     "id": "指甲",
     "english": "Fingernail",
     "chinese": "指甲",
-    "pinyin": "Zhǐjia"
+    "pinyin": "Zhǐjia",
+    "alternative": {
+      "chinese": "手指甲",
+      "pinyin": "Shǒuzhǐjia"
+    }
   },
   {
     "id": "独生子女",
     "english": "Only child",
     "chinese": "独生子女",
-    "pinyin": "Dúshēng zǐnǚ"
+    "pinyin": "Dúshēng zǐnǚ",
+    "alternative": {
+      "chinese": "家里唯一的孩子",
+      "pinyin": "Jiālǐ wéiyī de háizi"
+    }
   },
   {
     "id": "饺子",
     "english": "Dumpling",
     "chinese": "饺子",
-    "pinyin": "Jiǎozi"
+    "pinyin": "Jiǎozi",
+    "alternative": {
+      "chinese": "水饺",
+      "pinyin": "Shuǐjiǎo",
+      "note": "Specifically a boiled dumpling."
+    }
   },
   {
     "id": "强迫",
     "english": "Force / compel",
     "chinese": "强迫",
-    "pinyin": "Qiǎngpò"
+    "pinyin": "Qiǎngpò",
+    "alternative": {
+      "chinese": "逼迫",
+      "pinyin": "Bīpò"
+    }
   },
   {
     "id": "和睦",
     "english": "Harmonious",
     "chinese": "和睦",
-    "pinyin": "Hémù"
+    "pinyin": "Hémù",
+    "alternative": {
+      "chinese": "融洽",
+      "pinyin": "Róngqià",
+      "note": "For relationships or an atmosphere."
+    }
   },
   {
     "id": "温馨",
     "english": "Warm / cozy",
     "chinese": "温馨",
-    "pinyin": "Wēnxīn"
+    "pinyin": "Wēnxīn",
+    "alternative": {
+      "chinese": "温暖舒适",
+      "pinyin": "Wēnnuǎn shūshì"
+    }
   },
   {
     "id": "马虎",
     "english": "Careless / sloppy",
     "chinese": "马虎",
-    "pinyin": "Mǎhu"
+    "pinyin": "Mǎhu",
+    "alternative": {
+      "chinese": "粗心",
+      "pinyin": "Cūxīn"
+    }
   },
   {
     "id": "直走",
     "english": "Go straight",
     "chinese": "直走",
-    "pinyin": "Zhí zǒu"
+    "pinyin": "Zhí zǒu",
+    "alternative": {
+      "chinese": "一直往前走",
+      "pinyin": "Yìzhí wǎng qián zǒu"
+    }
   },
   {
     "id": "左转",
     "english": "Turn left",
     "chinese": "左转",
-    "pinyin": "Zuǒ zhuǎn"
+    "pinyin": "Zuǒ zhuǎn",
+    "alternative": {
+      "chinese": "往左拐",
+      "pinyin": "Wǎng zuǒ guǎi"
+    }
   },
   {
     "id": "螃蟹",
     "english": "Crab",
     "chinese": "螃蟹",
-    "pinyin": "Pángxiè"
+    "pinyin": "Pángxiè",
+    "alternative": {
+      "chinese": "蟹",
+      "pinyin": "Xiè",
+      "note": "A shorter term, common in food names and writing."
+    }
   },
   {
     "id": "嘴唇",
     "english": "Lips",
     "chinese": "嘴唇",
-    "pinyin": "Zuǐchún"
+    "pinyin": "Zuǐchún",
+    "alternative": {
+      "chinese": "唇部",
+      "pinyin": "Chúnbù",
+      "note": "More formal: the lip area."
+    }
   },
   {
     "id": "鼻子",
     "english": "Nose",
     "chinese": "鼻子",
-    "pinyin": "Bízi"
+    "pinyin": "Bízi",
+    "alternative": {
+      "chinese": "鼻部",
+      "pinyin": "Bíbù",
+      "note": "More formal: the nose area."
+    }
   },
   {
     "id": "腋窝",
     "english": "Armpits",
     "chinese": "腋窝",
-    "pinyin": "Yèwō"
+    "pinyin": "Yèwō",
+    "alternative": {
+      "chinese": "胳肢窝",
+      "pinyin": "Gāzhiwō",
+      "note": "Colloquial."
+    }
   },
   {
     "id": "眉毛",
     "english": "Eyebrow",
     "chinese": "眉毛",
-    "pinyin": "Méimao"
+    "pinyin": "Méimao",
+    "alternative": {
+      "chinese": "眉",
+      "pinyin": "Méi",
+      "note": "Shorter form, common in compounds and writing."
+    }
   },
   {
     "id": "睫毛",
     "english": "Eyelash",
     "chinese": "睫毛",
-    "pinyin": "Jiémáo"
+    "pinyin": "Jiémáo",
+    "alternative": {
+      "chinese": "眼睫毛",
+      "pinyin": "Yǎnjiémáo"
+    }
   },
   {
     "id": "舌头",
     "english": "Tongue",
     "chinese": "舌头",
-    "pinyin": "Shétou"
+    "pinyin": "Shétou",
+    "alternative": {
+      "chinese": "舌",
+      "pinyin": "Shé",
+      "note": "Shorter, more formal form."
+    }
   },
   {
     "id": "宽阔",
     "english": "Wide / broad",
-    "chinese": "宽阔",
-    "pinyin": "Kuānkuò"
+    "chinese": "宽",
+    "pinyin": "Kuān",
+    "alternative": {
+      "chinese": "宽广",
+      "pinyin": "Kuānguǎng"
+    }
   },
   {
     "id": "打造",
     "english": "Build / forge",
     "chinese": "打造",
-    "pinyin": "Dǎzào"
+    "pinyin": "Dǎzào",
+    "alternative": {
+      "chinese": "构建",
+      "pinyin": "Gòujiàn"
+    }
   },
   {
     "id": "公寓",
     "english": "Apartment",
     "chinese": "公寓",
-    "pinyin": "Gōngyù"
+    "pinyin": "Gōngyù",
+    "alternative": {
+      "chinese": "公寓房",
+      "pinyin": "Gōngyù fáng"
+    }
   },
   {
     "id": "拥挤",
     "english": "Crowded",
     "chinese": "拥挤",
-    "pinyin": "Yōngjǐ"
+    "pinyin": "Yōngjǐ",
+    "alternative": {
+      "chinese": "人挤人",
+      "pinyin": "Rén jǐ rén",
+      "note": "For a place crowded with people."
+    }
   },
   {
     "id": "利息",
     "english": "Interest (financial)",
     "chinese": "利息",
-    "pinyin": "Lìxī"
+    "pinyin": "Lìxī",
+    "alternative": {
+      "chinese": "利钱",
+      "pinyin": "Lìqian",
+      "note": "Colloquial."
+    }
   },
   {
     "id": "随和",
     "english": "Easygoing",
     "chinese": "随和",
-    "pinyin": "Suíhe"
+    "pinyin": "Suíhe",
+    "alternative": {
+      "chinese": "好相处",
+      "pinyin": "Hǎo xiāngchǔ"
+    }
   },
   {
     "id": "ai-personalized-education",
@@ -609,6 +923,46 @@ button { font: inherit; }
     "alternative": {
       "chinese": "这是本月底结算的发票。",
       "pinyin": "Zhè shì běn yuèdǐ jiésuàn de fāpiào."
+    }
+  },
+  {
+    "id": "one-of-each",
+    "english": "One of each",
+    "chinese": "每样一个。",
+    "pinyin": "Měi yàng yí ge.",
+    "alternative": {
+      "chinese": "一样来一个。",
+      "pinyin": "Yí yàng lái yí ge."
+    }
+  },
+  {
+    "id": "narrow-hallway",
+    "english": "The hallway is very narrow",
+    "chinese": "走廊很窄。",
+    "pinyin": "Zǒuláng hěn zhǎi.",
+    "alternative": {
+      "chinese": "过道很窄。",
+      "pinyin": "Guòdào hěn zhǎi."
+    }
+  },
+  {
+    "id": "wide-or-thin-noodles",
+    "english": "Wide noodles or thin noodles",
+    "chinese": "宽面还是细面？",
+    "pinyin": "Kuān miàn háishi xì miàn?",
+    "alternative": {
+      "chinese": "面条要宽的还是细的？",
+      "pinyin": "Miàntiáo yào kuān de háishi xì de?"
+    }
+  },
+  {
+    "id": "pure-vocabulary-memorization",
+    "english": "I need to memorize a lot of vocabulary. It's just pure memorization",
+    "chinese": "我得背很多单词，就是死记硬背。",
+    "pinyin": "Wǒ děi bèi hěn duō dāncí, jiùshì sǐ jì yìng bèi.",
+    "alternative": {
+      "chinese": "我需要记住很多词汇，完全靠背。",
+      "pinyin": "Wǒ xūyào jìzhù hěn duō cíhuì, wánquán kào bèi."
     }
   }
 ]
@@ -742,6 +1096,7 @@ function restore(raw, ids, random = Math.random) {
       const variant = span("answerVariant", "");
       if (current.alternative) variant.append(span("cardLabel", index === 0 ? "1 · MOST COMMON" : "2 · ANOTHER COMMON WAY"));
       variant.append(span("pinyin", answer.pinyin, "zh-Latn"), span("chinese", answer.chinese, "zh-Hans"));
+      if (answer.note) variant.append(span("answerNote", answer.note));
       content.append(variant);
     });
     content.append(span("translation", current.english));

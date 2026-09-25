@@ -12,19 +12,20 @@ const { grade, restore } = sandbox.api;
 
 const ids = deck.map(card => card.id);
 
-test("all 80 cards have unique IDs, Chinese and tone-marked Pinyin", () => {
-  assert.equal(deck.length, 80);
-  assert.equal(new Set(ids).size, 80);
+test("all 84 cards have unique IDs, Chinese and tone-marked Pinyin", () => {
+  assert.equal(deck.length, 84);
+  assert.equal(new Set(ids).size, 84);
   for (const card of deck) {
     assert.ok(card.english && card.chinese);
     assert.match(card.pinyin, /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/u);
+    assert.ok(card.alternative, "Missing second answer: " + card.english);
     if (card.alternative) {
       assert.ok(card.alternative.chinese);
       assert.notEqual(card.alternative.chinese, card.chinese);
       assert.match(card.alternative.pinyin, /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/u);
     }
   }
-  assert.equal(deck.filter(card => card.alternative).length, 6);
+  assert.equal(deck.filter(card => card.alternative).length, 84);
 });
 
 
