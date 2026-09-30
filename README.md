@@ -6,11 +6,11 @@ A minimalist white-on-black study page, copied from the Model Comparison flashca
 
 Open index.html in a browser, or serve this repository using any static web server.
 
-- 84 English prompts with Chinese characters and tone-marked Pinyin.
+- 88 English prompts with Chinese characters and tone-marked Pinyin.
 - Every card includes two Chinese versions, with the most common phrasing first. Brief notes identify alternatives that are formal, regional, or specific to a context.
 - Click the card (or focus it and press Space/Enter) to reveal the answer.
 - Choose **Again** or **Got it** to move on.
-- Every page load starts a fresh shuffled round containing all 84 cards.
+- Every page load starts a fresh shuffled round containing all 88 cards.
 - **Got it** removes a card for the rest of the round, so it cannot return before every other card has been shown.
 - **Again** puts a missed card back after two other cards when possible. If fewer remain, it returns sooner.
 - Once every card is marked **Got it**, a new shuffled round starts automatically. The last card is not immediately repeated at the round boundary.
